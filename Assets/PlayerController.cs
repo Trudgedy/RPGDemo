@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ public class PlayerController : MonoBehaviour
 
 	Camera camera;
 	PlayerMoter playerMotor;
-
+	public Interactable focus;
 
 	// Start is called before the first frame update
 	void Start()
@@ -30,7 +31,7 @@ public class PlayerController : MonoBehaviour
 			{
 				playerMotor.MoveToPoint(hit.point);
 
-				//stop focus
+				RemoveFocus();
 			}
 		}
 
@@ -41,8 +42,26 @@ public class PlayerController : MonoBehaviour
 
 			if (Physics.Raycast(clickRay, out hit, 100))
 			{
-				//Check if interactable then set focus
+				Interactable interactable = hit.collider.GetComponent<Interactable>();
+				if (interactable != null)
+				{
+					SetFocus(interactable);
+				}
+
 			}
 		}
 	}
+	private void SetFocus(Interactable interactable)
+	{
+		focus = interactable;
+		playerMotor.FollowTarget(interactable);
+	}
+
+	private void RemoveFocus()
+	{
+		focus = null;
+		playerMotor.StopFollowingTarget();
+	}
+
+
 }
